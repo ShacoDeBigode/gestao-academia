@@ -9,5 +9,5 @@ import java.util.List;
 public interface MensalidadeRepository extends JpaRepository<Mensalidade, UUID> {
     List<Mensalidade> findByAlunoId(UUID alunoId);
 
-    List<Mensalidade> findByStatus(StatusPagamento status);
+    List<Mensalidade> findByStatusNot(StatusPagamento status);
 }

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class ReservaService {
@@ -30,6 +31,18 @@ public class ReservaService {
         } else {
             throw new RuntimeException("Aula lotada, parceiro!");
         }
+    }
+
+    @Transactional
+    public void cancelarReserva(UUID reservaId) {
+        Reserva reserva = repository.findById(reservaId)
+                .orElseThrow(() -> new RuntimeException("Reserva não encontrada"));
+        Aula aula = reserva.getAula();
+
+        aula.setVagas(aula.getVagas() + 1);
+        aulaRepository.save(aula);
+
+        repository.delete(reserva);
     }
 
     public List<Reserva> listarTodas() {
