@@ -1,4 +1,5 @@
 package com.gestao_academia.controller;
+import com.gestao_academia.dto.TreinoDetalhamentoDTO;
 import com.gestao_academia.model.Treino;
 import com.gestao_academia.service.TreinoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,9 @@ public class TreinoController {
     }
 
     @GetMapping
-    public List<Treino> listarTodos() {
-        return service.listarTodos();
+    public List<TreinoDetalhamentoDTO> listarTodos() {
+        return service.listarTodos().stream()
+                .map(TreinoDetalhamentoDTO :: new)
+                .toList();
     }
 }
