@@ -11,6 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/treinos")
+@io.swagger.v3.oas.annotations.security.SecurityRequirement(name = "bearer-key")
 public class TreinoController {
     @Autowired
     private TreinoService service;
