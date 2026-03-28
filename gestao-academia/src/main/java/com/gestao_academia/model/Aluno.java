@@ -14,6 +14,9 @@ import java.util.List;
 public class Aluno extends Usuario {
 
     private String matricula;
+    @ManyToOne
+    @JoinColumn(name = "planos")
+    private Plano plano;
 
     @OneToMany(mappedBy = "aluno", fetch = FetchType.LAZY)
     private List<Mensalidade> mensalidades;

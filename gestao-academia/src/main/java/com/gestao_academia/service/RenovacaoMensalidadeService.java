@@ -27,6 +27,18 @@ public class RenovacaoMensalidadeService {
         var alunos = alunoRepository.findAll();
 
         for (Aluno aluno : alunos) {
+            if(aluno.getPlano() != null) {
+                Mensalidade nova = new Mensalidade();
+                nova.setAluno(aluno);
+
+                nova.setDataVencimento(LocalDate.now().plusDays(10));
+                nova.setStatus(StatusPagamento.PENDENTE);
+
+
+                mensalidadeRepository.save(nova);
+            }
+
+
             Mensalidade nova = new Mensalidade();
             nova.setAluno(aluno);
             nova.setValor(new BigDecimal("150.00"));
