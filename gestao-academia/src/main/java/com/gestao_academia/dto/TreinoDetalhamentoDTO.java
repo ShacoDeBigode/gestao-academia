@@ -1,7 +1,7 @@
 package com.gestao_academia.dto;
 
 import com.gestao_academia.model.Treino;
-import com.gestao_academia.model.Serie; // Import importante!
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -9,7 +9,7 @@ import java.util.UUID;
 public record TreinoDetalhamentoDTO(
         UUID id,
         String nome,
-        LocalDate dataCriacao,
+        @JsonFormat(pattern = "dd/MM/yyyy") LocalDate dataCriacao,
         String nomeAluno,
         List<SerieResumoDTO> series
 ) {
@@ -24,13 +24,8 @@ public record TreinoDetalhamentoDTO(
     }
 }
 
-
 record SerieResumoDTO(String exercicio, int reps, float carga) {
-    public SerieResumoDTO(Serie s) {
-        this(
-                s.getExercicio() != null ? s.getExercicio().getNome() : "Exercício não informado",
-                s.getRepeticoes(),
-                s.getCarga()
-        );
+    public SerieResumoDTO(com.gestao_academia.model.Serie s) {
+        this(s.getExercicio() != null ? s.getExercicio().getNome() : "N/I", s.getRepeticoes(), s.getCarga());
     }
 }

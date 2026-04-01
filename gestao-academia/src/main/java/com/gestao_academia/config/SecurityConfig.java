@@ -13,6 +13,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.cors.CorsConfigurationSource;
+
+import java.util.Arrays;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -24,36 +30,27 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // 1. Acesso Público
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()
-
-                        // 2. Acesso exclusivo do MESTRE (ADMIN) - O Financeiro e Gestão de Staff
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
                         .requestMatchers("/api/relatorios/**").hasRole("ADMIN")
-                        .requestMatchers("/api/pagamentos/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/mensalidade/*/pagar").hasRole("ADMIN")
-                        .requestMatchers("/api/professores/**").hasRole("ADMIN")
-
-                        // 3. Acesso PROFESSOR e ADMIN - Parte Técnica e Alunos
-                        // Professor pode criar exercícios e montar treinos
-                        .requestMatchers(HttpMethod.POST, "/api/exercicios/**").hasAnyRole("ADMIN", "PROFESSOR")
-                        .requestMatchers("/api/treinos/**").hasAnyRole("ADMIN", "PROFESSOR")
-                        .requestMatchers("/api/alunos/**").hasAnyRole("ADMIN", "PROFESSOR")
-                        .requestMatchers("/api/aulas/**").hasAnyRole("ADMIN", "PROFESSOR")
-
-                        // 4. Acesso ALUNO - Ver o próprio progresso
-                        // Aqui o aluno só pode dar GET nas coisas dele
-                        .requestMatchers("/api/reservas/**").authenticated()
-                        .requestMatchers("/api/historico-cargas/**").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/api/treinos/meu-treino").hasRole("ALUNO")
-
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
     }
 
     @Bean
