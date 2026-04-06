@@ -23,16 +23,16 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity efetuarLogin(@RequestBody @Valid AutenticacaoDTO dados) {
-
         var authenticationToken = new UsernamePasswordAuthenticationToken(dados.email(), dados.senha());
-
 
         var authentication = manager.authenticate(authenticationToken);
 
-        var tokenJWT = tokenService.gerarToken((Usuario) authentication.getPrincipal());
+        var usuarioLogado = (Usuario) authentication.getPrincipal();
 
-        return ResponseEntity.ok(new DadosTokenJWT(tokenJWT));
+        var tokenJWT = tokenService.gerarToken(usuarioLogado);
+        
+        return ResponseEntity.ok(new DadosTokenJWT(tokenJWT, usuarioLogado.getTipo().name()));
     }
 
-    public record DadosTokenJWT(String token) {}
+    public record DadosTokenJWT(String token, String tipo) {}
 }

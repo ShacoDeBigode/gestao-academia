@@ -11,4 +11,4 @@ import lombok.EqualsAndHashCode;
 public class Professor extends Usuario {
     private String especialidade;
     private String registroProfissional;
-}
+}   

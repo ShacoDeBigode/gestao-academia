@@ -6,5 +6,6 @@ import jakarta.persistence.Enumerated;
 public enum Perfil {
     ALUNO,
     PROFESSOR,
-    ADMIN
+    ADMIN,
+    RECEPCIONISTA
 }
